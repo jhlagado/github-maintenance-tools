@@ -34,6 +34,14 @@ Output files are dated: `repos-<OWNER>-<timestamp>.{json,-enriched.json,-triage.
 
 Tune the heuristic **`audit_score_triage`** in `scripts/github-repo-inventory-enrich.jq`.
 
+After an inventory run, build a Markdown triage report from the latest enriched JSON (use **`jq -r`** so line breaks are real):
+
+```bash
+OWNER=jhlagado bash scripts/github-repo-inventory.sh
+latest=$(ls -t github-repo-audit/repos-${OWNER}-*-enriched.json | head -1)
+jq -r --arg owner "$OWNER" -f scripts/github-repo-audit-report.jq "$latest" >"github-repo-audit/report-${OWNER}.md"
+```
+
 ## Suggested repo topics
 
 Use GitHub topics as a taxonomy, for example:
