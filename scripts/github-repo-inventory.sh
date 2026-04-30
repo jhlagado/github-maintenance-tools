@@ -38,7 +38,8 @@ limit="${LIMIT:-9999}"
 
 echo "Listing repos for: $owner (limit=$limit)" >&2
 
-repo_args=(repo list "$owner" -L "$limit" --visibility all)
+# Omit --visibility: gh only accepts public|private|internal (not "all"); default lists repos you can see.
+repo_args=(gh repo list "$owner" -L "$limit")
 [[ -z "${INCLUDE_FORKS:-}" ]] && repo_args+=(--source)
 
 fields=(
