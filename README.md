@@ -34,6 +34,21 @@ Output files are dated: `repos-<OWNER>-<timestamp>.{json,-enriched.json,-triage.
 
 Tune the heuristic **`audit_score_triage`** in `scripts/github-repo-inventory-enrich.jq`.
 
+## Bulk archive (run with your own `gh` auth)
+
+Automation tokens often cannot call GitHub’s archive API. With `gh auth login` as a user who can manage the repos:
+
+```bash
+OWNER=jhlagado bash scripts/github-repo-archive-batch.sh \
+  json-data x zedforth stack-programming zeforth jh-lagado.com start-workshop \
+  vite-23a vanilla tig vite-23 siena scan ts-loCal react-vs-svelte loCal \
+  form-recoil menta text stc-forth SerMon fedit tailwind-parcel forth-memory \
+  webforth-cli fstackbags fbags obags nodets Joy-Programming ts-forth Counter1 \
+  hardware basic-ce working-with-custom-elements expr1 angry-redux-starter phample
+```
+
+You can also pipe one repo name per line on stdin. Each run uses `gh repo archive OWNER/NAME -y`.
+
 ## Suggested repo topics
 
 Use GitHub topics as a taxonomy, for example:
