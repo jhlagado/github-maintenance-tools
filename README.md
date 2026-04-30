@@ -21,11 +21,14 @@ Useful environment variables:
 
 | Variable | Purpose |
 |----------|---------|
-| `OWNER` | User or organization (defaults to authenticated user) |
+| `OWNER` | User or organization (if unset, uses `gh api user`, then see fallback below) |
+| `GITHUB_REPO_AUDIT_OWNER` | Fallback login/org when `gh api user` fails (common with narrow integration tokens) |
 | `LIMIT` | Max repos (default `9999`) |
 | `INCLUDE_FORKS` | Set to any value to include forks |
 | `GITHUB_REPO_AUDIT_OUT` | Output directory (default `./github-repo-audit`) |
 | `ENRICH_JQ` | Override path to the scoring/filter jq program |
+
+If `gh api user` is blocked (some integration tokens), set **`OWNER`** or **`GITHUB_REPO_AUDIT_OWNER`** to your login or org.
 
 Output files are dated: `repos-<OWNER>-<timestamp>.{json,-enriched.json,-triage.csv}`.
 
