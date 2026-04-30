@@ -29,7 +29,7 @@ map(
     ) as $score
   |
   . + {
-    audit_topic_names: (.repositoryTopics | map(.name)),
+    audit_topic_names: ((.repositoryTopics // []) | map(.name)),
     audit_days_since_push: $days,
     audit_score_triage: $score,
     audit_primary_language: (.primaryLanguage // null | .name // "")
