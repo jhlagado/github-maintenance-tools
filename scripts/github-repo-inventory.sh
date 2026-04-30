@@ -9,8 +9,9 @@
 #   INCLUDE_FORKS=1 bash scripts/github-repo-inventory.sh
 #
 # Optional env:
-#   GITHUB_REPO_AUDIT_OUT  output directory (default: ./github-repo-audit)
-#   OWNER                   user or org (default: authenticated user login)
+#   GITHUB_REPO_AUDIT_OUT       output directory (default: ./github-repo-audit)
+#   GITHUB_REPO_AUDIT_OWNER     fallback login/org when gh api user fails (e.g. integration tokens)
+#   OWNER                       user or org (overrides default; preferred explicit target)
 #   LIMIT                   max repos (default: 9999)
 #   INCLUDE_FORKS           set nonempty to include forks (default: omit forks)
 #   ENRICH_JQ               path to scoring jq program (default: github-repo-inventory-enrich.jq beside this script)
@@ -31,7 +32,17 @@ mkdir -p "$OUT_DIR"
 if [[ -n "${OWNER:-}" ]]; then
   owner="$OWNER"
 else
-  owner="$(gh api user --jq '.login')"
+  owner=""
+  if api_login="$(gh api user --jq '.login' 2>/dev/null)" && [[ -n "$api_login" ]]; then
+    owner="$api_login"
+  elif [[ -n "${GITHUB_REPO_AUDIT_OWNER:-}" ]]; then
+    owner="$GITHUB_REPO_AUDIT_OWNER"
+    echo "github-repo-inventory: gh api user unavailable or empty; using GITHUB_REPO_AUDIT_OWNER=$owner" >&2
+  else
+    echo "github-repo-inventory: could not resolve owner (gh api user failed and GITHUB_REPO_AUDIT_OWNER is unset)." >&2
+    echo "Set OWNER or GITHUB_REPO_AUDIT_OWNER to your GitHub login or org." >&2
+    exit 1
+  fi
 fi
 
 limit="${LIMIT:-9999}"
